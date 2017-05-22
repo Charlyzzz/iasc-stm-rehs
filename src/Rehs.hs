@@ -17,15 +17,24 @@ module Rehs (
    clearAllTransaction,
    showTransaction) where
 
-import Control.Concurrent.STM
+import Control.Concurrent.STM.TArray    
+import Control.Concurrent.STM           (TVar, STM, newTVar, readTVar, writeTVar, modifyTVar)
+import Data.Array.MArray                (newArray_)
 import Data.Map.Strict as Map
 import Data.Char
+
 
 type Schema = TVar (Map String String)
 type SchemaTransaction = Schema -> STM String
 
 newSchema :: STM Schema
 newSchema = newTVar Map.empty
+
+type Pair = (String, String)
+type Schema' = TArray Int Pair
+
+newSchema' :: STM Schema'
+newSchema' = newArray_ $ (0,0)
 
 setSchema :: [String] -> SchemaTransaction
 setSchema keys = \schema -> do 
